@@ -53,7 +53,7 @@ void read(char *filename)
 
 
 //current_time, RUNNING, id=<process-id>, remaining-time=<T_rem>, load-time=<T_load>, mem-usage=<mem_usage>%, mem-addresses=[<set_of_pages>]\n
-void ff(Process_Array p_A) {
+void ff(Process_Array p_A) { //TODO handle the case when process isn't ready in time.
     int t = global_t;
     for (int i=0; i<p_A.num; i++) {
         printf("%d, RUNNING, id=%d, remaining-time=%d\n", global_t, p_A.array[i].id, p_A.array[i].runtime);
