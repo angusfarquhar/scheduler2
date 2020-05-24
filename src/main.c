@@ -2,25 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
-#include "../include/main.h"
-#include "../include/read.h"
-
-typedef struct Arguments {
-    char* filename;
-    char* schedulingAlgorithm;
-    char* memoryAllocation;
-    char* memorySize;
-    char* quantum;
-} Arguments;
-
-
-
-
+#include "../include/args.h"
+#include "../include/process.h"
+#include "../include/run.h"
 
 //example input: $ ./scheduler -f processes.txt -a ff -s 200 -m p
 int main(int argc, char ** argv)
 {
-    Arguments a;
+    Args a;
     char *arg;
 
     //handle the stdin
@@ -55,9 +44,10 @@ int main(int argc, char ** argv)
     printf("\n-a : %s", a.schedulingAlgorithm);
     printf("\n-m : %s", a.memoryAllocation);
     printf("\n-s : %s", a.memorySize);
-    printf("\n-q : %s", a.quantum);
+    printf("\n-q : %s\n\n", a.quantum);
 
     read(a.filename);
+    run(a);
 
     
     return 0;
