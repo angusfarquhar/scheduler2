@@ -13,7 +13,7 @@ int main(int argc, char ** argv)
     char *arg;
 
     //handle the stdin
-    for (int i=0; i<argc; i++) //TODO fix issue with null character at end of stdin
+    for (int i=0; i<argc; i++)
     {
         if (i == argc-1) {
             arg = argv[i];
