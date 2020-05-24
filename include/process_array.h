@@ -7,4 +7,6 @@ typedef struct Process_Array {
     int num;
 } Process_Array;
 
+int proc_remaining(int t, Process_Array p_A);
+
 #endif
