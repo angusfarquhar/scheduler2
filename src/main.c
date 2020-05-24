@@ -3,6 +3,7 @@
 #include <string.h>
 #include <strings.h>
 #include "../include/main.h"
+#include "../include/read.h"
 
 typedef struct Arguments {
     char* filename;
@@ -19,7 +20,7 @@ typedef struct Arguments {
 //example input: $ ./scheduler -f processes.txt -a ff -s 200 -m p
 int main(int argc, char ** argv)
 {
-    Arguments arguments;
+    Arguments a;
     char *arg;
 
     //handle the stdin
@@ -32,33 +33,31 @@ int main(int argc, char ** argv)
             
         }
         if (strcmp(argv[i], "-f") == 0) {
-            arguments.filename = argv[i+1];
+            a.filename = argv[i+1];
             
         } else if (strcmp(argv[i], "-a") == 0) {
-            arguments.schedulingAlgorithm = argv[i+1];
+            a.schedulingAlgorithm = argv[i+1];
             
         } else if (strcmp(argv[i], "-m") == 0) {
-            arguments.memoryAllocation = argv[i+1];
+            a.memoryAllocation = argv[i+1];
             
         } else if (strcmp(argv[i], "-s") == 0) {
-            arguments.memorySize = argv[i+1];
+            a.memorySize = argv[i+1];
             
         } else if (strcmp(argv[i], "-q") == 0) {
-            arguments.quantum = argv[i+1];
+            a.quantum = argv[i+1];
             
         }
         
     }
 
-    printf("\n-f : %s", arguments.filename);
-    printf("\n-a : %s", arguments.schedulingAlgorithm);
-    printf("\n-m : %s", arguments.memoryAllocation);
-    printf("\n-s : %s", arguments.memorySize);
-    printf("\n-q : %s", arguments.quantum);
+    printf("\n-f : %s", a.filename);
+    printf("\n-a : %s", a.schedulingAlgorithm);
+    printf("\n-m : %s", a.memoryAllocation);
+    printf("\n-s : %s", a.memorySize);
+    printf("\n-q : %s", a.quantum);
 
-    if (!strcmp(arguments.quantum, "10")) {
-        printf("WOW");
-    }
+    read(a.filename);
 
     
     return 0;

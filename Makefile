@@ -1,6 +1,6 @@
 ##Adapted from http://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/
-DEPS = include/main.h
-OBJ = src/main.o
+DEPS = include/main.h include/read.h
+OBJ = src/main.o src/read.o
 EXE = scheduler
 
 ##Create .o files from .c files. Searches for .c files with same .o names given in OBJ
