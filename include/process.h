@@ -7,7 +7,6 @@ typedef struct Process {
     int kb;
     int runtime;
     int remaining;
-    int complete;
 } Process;
 
 #endif
