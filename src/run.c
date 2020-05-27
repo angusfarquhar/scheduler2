@@ -39,6 +39,7 @@ void read(char *filename)
         //assign file values to process struct
         p.remaining = p.runtime;
         p.time_queued = p.t;
+        p.has_run = 0;
         printf("time,id,kb,runtime,remaining,time_queued\nREAD = %d,%d,%d,%d,%d,%d\n\n\n", p.t, p.id, p.kb, p.runtime, p.remaining, p.time_queued);
         //save in process_array and keep track of how many processes
         p_A.array[i] = p;
@@ -75,14 +76,16 @@ void rr(Process_Array p_A, int quantum) {
         //need to make sure process is ready to run
         if (p_A.array[i].t <= global_t) 
         {
-            printf("%d, RUNNING, id=%d, remaining-time=%d\n", global_t, p_A.array[i].id, p_A.array[i].runtime);
+            //print_array(p_A);
+            printf("%d, RUNNING, id=%d, remaining-time=%d\n", global_t, p_A.array[i].id, p_A.array[i].remaining);
             //if we can finish the process before the quantum runs out
             if (p_A.array[i].remaining <= quantum) 
             {
                 //quantum will be finished
-                t += p_A.array[i].runtime;
-                global_t += p_A.array[i].runtime;
-                p_A.array[i].remaining -= p_A.array[i].runtime;
+                t += p_A.array[i].remaining;
+                global_t += p_A.array[i].remaining;
+                p_A.array[i].remaining = 0;
+                p_A.array[i].has_run = 1;
                 printf("%d, FINISHED, id=%d, proc-remaining=%d\n", global_t, p_A.array[i].id, proc_remaining(p_A));
                 //otherwise we need to keep the process waiting for the rr to come around again
             } else 
@@ -90,18 +93,21 @@ void rr(Process_Array p_A, int quantum) {
                 t += quantum;
                 global_t += quantum;
                 p_A.array[i].remaining -= quantum;
-                p_A.array[i].time_queued += quantum;
+                p_A.array[i].time_queued = global_t;
+                p_A.array[i].has_run = 1;
             }
         }
         
        
         //need to go back to start of array if there are still processes to be run
-        if (i == p_A.num-1) {
-            i=0;
-        } else
-        {
-            i++;
-        }
+        // if (i == p_A.num-1) {
+        //     i=0;
+        // } else
+        // {
+        //     i++;
+        // }
+        i = next_proc(p_A);
+        //printf("\ni : %d\n", i);
 
     }
 
