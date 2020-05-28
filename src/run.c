@@ -57,6 +57,8 @@ void read(char *filename)
 void ff(Process_Array p_A) { //TODO handle the case when process isn't ready in time.
     int t = global_t;
     for (int i=0; i<p_A.num; i++) {
+        //TODO if there is spare memory then start running
+
         printf("%d, RUNNING, id=%d, remaining-time=%d\n", global_t, p_A.array[i].id, p_A.array[i].runtime);
         t += p_A.array[i].runtime;
         global_t += p_A.array[i].runtime;

@@ -3,23 +3,13 @@ DEPS = include/main.h include/run.h include/process.h include/args.h include/pro
 OBJ = src/main.o src/run.o src/process_array.o
 EXE = scheduler
 
+##Create .o files from .c files. Searches for .c files with same .o names given in OBJ
 %.o: %.c $(DEPS)
 	gcc -c -o $@ $<
 
+##Create executable linked file from object files. 
 $(EXE): $(OBJ)
 	gcc -Wall -o $@ $^
-
-all: build
-
-build:
-	gcc -Wall -o $@ $^
-	
-test:
-	./scripts/test.sh
-
-
-docker:
-	docker build -t scheduler .
 
 ##Delete object and executable files
 clean:
