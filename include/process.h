@@ -5,6 +5,7 @@ typedef struct Process {
     int t;
     int id;
     int kb;
+    int mem_start;
     int runtime;
     int remaining;
     int time_queued;
