@@ -14,7 +14,7 @@ Process_Array p_A;
 int run(Args a) 
 {
     read(a.filename);
-    rr(p_A, 10);
+    ff(p_A);
 
     return 0;
 }
