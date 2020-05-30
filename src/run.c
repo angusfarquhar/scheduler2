@@ -14,7 +14,7 @@ Process_Array p_A;
 int run(Args a) 
 {
     read(a.filename);
-    ff(p_A);
+    rr(p_A, atoi(a.quantum));
 
     return 0;
 }
