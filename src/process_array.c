@@ -63,10 +63,11 @@ int next_proc(Process_Array p_A) {
             {
                 ;
             } else
-            {
+            {   
+                //check if there is a process waiting that hasn't run
                 if (p_A.array[i].has_run < p_A.array[min_i].has_run) 
                 {
-                    //printf("%d less than %d", i, min_i);
+                    fprintf(stderr, "%d less than %d\n", i, min_i);
                     min_i = i;
                 }
                 if (p_A.array[i].id > p_A.array[min_i].id) 
@@ -89,7 +90,7 @@ int next_proc(Process_Array p_A) {
         //printf("\ni : %d\n", i);
         
     }
-    //printf("\nmin_i : %d\n", min_i);
+    fprintf(stderr, "\nmin_i : %d\n", min_i);
 
     return min_i;
 }
