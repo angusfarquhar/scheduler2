@@ -13,19 +13,24 @@
 
 int global_t = 0;
 Process_Array p_A;
+Bitmap bitmap;
 
 int run(Args a) 
 {
     read(a.filename);
-
-    if (strcmp(a.schedulingAlgorithm, "ff") == 0) {
+    if (strcmp(a.memoryAllocation, "u") == 0) {
+        if (strcmp(a.schedulingAlgorithm, "ff") == 0) {
         ff(p_A);
-    } else if (strcmp(a.schedulingAlgorithm, "rr") == 0)
-    {
-        rr(p_A, atoi(a.quantum));
-    } else {
-        //TODO my scheduling algorithm
-        ;
+        } else if (strcmp(a.schedulingAlgorithm, "rr") == 0)
+        {
+            rr(p_A, atoi(a.quantum));
+        } else if (strcmp(a.schedulingAlgorithm, "cs") == 0) {
+            //TODO my scheduling algorithm
+            ;
+        }
+    
+    } else if (strcmp(a.memoryAllocation, "p") == 0) {
+        ff_p(p_A, atoi(a.memorySize));
     }
 
     
@@ -55,6 +60,7 @@ void read(char *filename)
         p.time_queued = p.t;
         p.has_run = 0;
         p.load_time = p.kb/4 * 2;
+        p.pages = p.kb/4;
         //printf("load time : %d\n", p.load_time);
         //printf("time,id,kb,runtime,remaining,time_queued\nREAD = %d,%d,%d,%d,%d,%d\n\n\n", p.t, p.id, p.kb, p.runtime, p.remaining, p.time_queued);
         //save in process_array and keep track of how many processes
@@ -124,18 +130,7 @@ void rr(Process_Array p_A, int quantum) {
                 p_A.array[i].has_run = 1;
             }
         }
-        
-       
-        //need to go back to start of array if there are still processes to be run
-        // if (i == p_A.num-1) {
-        //     i=0;
-        // } else
-        // {
-        //     i++;
-        // }
         i = next_proc(p_A);
-        //printf("\ni : %d\n", i);
-
     }
 
     print_throughput(p_A);
@@ -146,4 +141,45 @@ void rr(Process_Array p_A, int quantum) {
     return;
 }
 
+void ff_p(Process_Array p_A, int memory) { //TODO handle the case when process isn't ready in time.
+    int t = global_t;
+    int pages = memory/4;
+    print_array(p_A);
+    bitmap.num = pages;
+    init_bitmap();
+    fprintf(stderr, "pages = %d\n", bitmap.num);
+
+    for (int i=0; i<p_A.num; i++) {
+        //TODO if there is spare memory then start running
+        if (room_for_process(p_A.array[i])) {
+            fprintf(stderr, "YES! THERE IS ROOM\n");
+            print_bitmap();
+        } 
+        //now process is running! print running stuff
+        print_running(p_A.array[i]);
+        print_mem_usage(p_A.array[i]);
+        print_mem_addresses(p_A.array[i]);
+
+        //adjust all the times after the process has run
+        t += p_A.array[i].runtime;
+        global_t += p_A.array[i].runtime;
+        p_A.array[i].remaining -= p_A.array[i].runtime;
+        
+        //loading out of memory
+        global_t += p_A.array[i].load_time;
+        printf("%d, EVICTED, mem-addresses=[0,1,2,3,4]\n", global_t); //TODO will need to sort out proc waiting function
+        printf("%d, FINISHED, id=%d, proc-remaining=%d\n", global_t, p_A.array[i].id, proc_waiting(global_t, p_A));
+        
+        remove_process(p_A.array[i]);
+        p_A.array[i].end_time = global_t;
+    }
+
+    print_throughput(p_A);
+    print_turnaround_time(p_A);
+    print_timeoverhead(p_A);
+    printf("Makespan %d\n", global_t);
+
+
+    return;
+}
 

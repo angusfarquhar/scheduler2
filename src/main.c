@@ -27,11 +27,11 @@ int main(int argc, char ** argv)
         
     }
 
-    // printf("\n-f : %s", a.filename);
-    // printf("\n-a : %s", a.schedulingAlgorithm);
-    // printf("\n-m : %s", a.memoryAllocation);
-    // printf("\n-s : %s", a.memorySize);
-    // printf("\n-q : %s\n\n", a.quantum);
+    fprintf(stderr, "\n-f : %s", a.filename);
+    fprintf(stderr, "\n-a : %s", a.schedulingAlgorithm);
+    fprintf(stderr, "\n-m : %s", a.memoryAllocation);
+    fprintf(stderr, "\n-s : %s", a.memorySize);
+    fprintf(stderr, "\n-q : %s\n\n", a.quantum);
 
     run(a);
 
