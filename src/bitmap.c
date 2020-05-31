@@ -10,27 +10,29 @@
 extern Bitmap bitmap;
 extern int global_t;
 
-//returns 0 if process can't fit, adds the process id to bitmap at corresponding page
+//returns 0 if process can't fit 1 if it can and adds the process id to bitmap at corresponding page
 int room_for_process(Process p) 
 {
     int count = p.pages;
     fprintf(stderr, "room_bitmap[0] = %d\n", bitmap.array[0]);
     fprintf(stderr, "count = %d\n", count);
     fprintf(stderr, "p.pages = %d\n", p.pages);
-    for (int i=0; i<bitmap.num; i++) {       
+    for (int i=0; i<bitmap.num; i++) {  
+        if (count == 0) {
+            return 1;
+        }      
         if (bitmap.array[i] == -1) {
             count--;
+            //add process to bitmap
             bitmap.array[i] = p.id;
 
         }
    }
-   fprintf(stderr, "countend = %d\n", count);
-   if (count == 0) {
-       return 1;
-   } else {
-       return 0;
-   }
+    fprintf(stderr, "countend = %d\n", count);
+    return 0;
+
 }
+
 
 void remove_process(Process p) {
     for (int i=0; i<bitmap.num; i++) {       

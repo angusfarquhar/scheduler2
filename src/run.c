@@ -210,7 +210,8 @@ void rr_p(Process_Array p_A, int memory, int quantum) {
             //print running stuff
             print_running(p_A.array[i]);
             print_mem_usage(p_A.array[i]);
-            print_mem_addresses(p_A.array[i]);            //if we can finish the process before the quantum runs out
+            print_mem_addresses(p_A.array[i]);    
+            //if we can finish the process before the quantum runs out        
             if (p_A.array[i].remaining <= quantum) 
             {
                 //quantum will be finished
