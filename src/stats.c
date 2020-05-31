@@ -2,6 +2,8 @@
 
 #include "../include/stats.h"
 
+extern int global_t;
+
 void print_throughput(Process_Array p_A) {
     int stats[10] = {0};
     int avg=0;
@@ -49,7 +51,7 @@ int avg_throughput(int *array, int num) {
     float count = 0;
     for (int i=0; i<num; i++) 
     {
-        if (array[i] != 0 || i == 0) {
+        if (array[i] != 0 || i == 0 || i == 1) { //TODO fix this hacky avg bullshit
             total += array[i];
             fprintf(stderr, "total : %f\n", total);
             count++;

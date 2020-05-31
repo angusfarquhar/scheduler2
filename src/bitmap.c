@@ -59,11 +59,6 @@ void print_bitmap() {
     return;
 }
 
-void print_running(Process p) {
-    printf("%d, RUNNING, id=%d, remaining-time=%d, load-time=%d", global_t, p.id, p.runtime, p.load_time);
-
-}
-
 //adapted from https://www.tutorialspoint.com/learn_c_by_examples/program_to_calculate_percentage_in_c.htm
 void print_mem_usage(Process p) {
 
