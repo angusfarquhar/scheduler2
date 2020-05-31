@@ -7,6 +7,7 @@
 #include "../include/args.h"
 #include "../include/process_array.h"
 #include "../include/stats.h"
+#include "../include/bitmap.h"
 
 
 
@@ -16,7 +17,18 @@ Process_Array p_A;
 int run(Args a) 
 {
     read(a.filename);
-    ff(p_A);
+
+    if (strcmp(a.schedulingAlgorithm, "ff") == 0) {
+        ff(p_A);
+    } else if (strcmp(a.schedulingAlgorithm, "rr") == 0)
+    {
+        rr(p_A, atoi(a.quantum));
+    } else {
+        //TODO my scheduling algorithm
+        ;
+    }
+
+    
 
     return 0;
 }
@@ -126,6 +138,12 @@ void rr(Process_Array p_A, int quantum) {
 
     }
 
+    print_throughput(p_A);
+    print_turnaround_time(p_A);
+    print_timeoverhead(p_A);
+    printf("Makespan %d\n", global_t);
+
     return;
 }
+
 

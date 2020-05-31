@@ -12,6 +12,7 @@ void print_throughput(Process_Array p_A) {
         int bin = (p_A.array[i].end_time-1)/60;
         stats[bin] += 1; 
     }
+    print_array(p_A);
     avg = avg_throughput(stats, 10);
     min = min_throughput(stats, 10);
     max = max_throughput(stats, 10);
@@ -48,8 +49,9 @@ int avg_throughput(int *array, int num) {
     float count = 0;
     for (int i=0; i<num; i++) 
     {
-        if (array[i] != 0) {
+        if (array[i] != 0 || i == 0) {
             total += array[i];
+            fprintf(stderr, "total : %f\n", total);
             count++;
         }   
     }

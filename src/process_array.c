@@ -95,10 +95,10 @@ int next_proc(Process_Array p_A) {
 }
 
 void print_array(Process_Array p_A) {
-    printf("\n[i]\tt\tid\tkb\truntime\trem\tt_q\thas_run\n");
+    fprintf(stderr, "\n[i]\tt\tid\tkb\truntime\trem\tt_q\thas_run\tend\n");
     for (int i=0; i<p_A.num; i++)
     {
-        printf("[%d]\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", i, p_A.array[i].t, p_A.array[i].id, p_A.array[i].kb, p_A.array[i].runtime, p_A.array[i].remaining, p_A.array[i].time_queued, p_A.array[i].has_run);
+        fprintf(stderr, "[%d]\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", i, p_A.array[i].t, p_A.array[i].id, p_A.array[i].kb, p_A.array[i].runtime, p_A.array[i].remaining, p_A.array[i].time_queued, p_A.array[i].has_run, p_A.array[i].end_time);
     }
-    printf("\n");
+    fprintf(stderr, "\n");
 }

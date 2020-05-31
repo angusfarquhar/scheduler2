@@ -5,9 +5,9 @@
 #include <stdbool.h>
 
 #include "../include/process.h"
-#include "../include/memory.h"
+#include "../include/bitmap.h"
 
-void bitmap() 
+Bitmap* init_bitmap(int num) 
 {
    
 }
