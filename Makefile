@@ -1,6 +1,6 @@
 ##Adapted from http://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/
-DEPS = include/main.h include/run.h include/process.h include/args.h include/process_array.h
-OBJ = src/main.o src/run.o src/process_array.o
+DEPS = include/main.h include/run.h include/process.h include/args.h include/process_array.h include/stats.h
+OBJ = src/main.o src/run.o src/process_array.o src/stats.o
 EXE = scheduler
 
 %.o: %.c $(DEPS)

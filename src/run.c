@@ -6,6 +6,8 @@
 #include "../include/run.h"
 #include "../include/args.h"
 #include "../include/process_array.h"
+#include "../include/stats.h"
+
 
 
 int global_t = 0;
@@ -14,7 +16,7 @@ Process_Array p_A;
 int run(Args a) 
 {
     read(a.filename);
-    rr(p_A, atoi(a.quantum));
+    ff(p_A);
 
     return 0;
 }
@@ -40,7 +42,9 @@ void read(char *filename)
         p.remaining = p.runtime;
         p.time_queued = p.t;
         p.has_run = 0;
-        printf("time,id,kb,runtime,remaining,time_queued\nREAD = %d,%d,%d,%d,%d,%d\n\n\n", p.t, p.id, p.kb, p.runtime, p.remaining, p.time_queued);
+        p.load_time = p.kb/4 * 2;
+        //printf("load time : %d\n", p.load_time);
+        //printf("time,id,kb,runtime,remaining,time_queued\nREAD = %d,%d,%d,%d,%d,%d\n\n\n", p.t, p.id, p.kb, p.runtime, p.remaining, p.time_queued);
         //save in process_array and keep track of how many processes
         p_A.array[i] = p;
         p_A.num++;
@@ -56,6 +60,7 @@ void read(char *filename)
 //current_time, RUNNING, id=<process-id>, remaining-time=<T_rem>, load-time=<T_load>, mem-usage=<mem_usage>%, mem-addresses=[<set_of_pages>]\n
 void ff(Process_Array p_A) { //TODO handle the case when process isn't ready in time.
     int t = global_t;
+    print_array(p_A);
     for (int i=0; i<p_A.num; i++) {
         //TODO if there is spare memory then start running
 
@@ -63,8 +68,15 @@ void ff(Process_Array p_A) { //TODO handle the case when process isn't ready in 
         t += p_A.array[i].runtime;
         global_t += p_A.array[i].runtime;
         p_A.array[i].remaining -= p_A.array[i].runtime;
-        printf("%d, FINISHED, id=%d, proc-remaining=%d\n", global_t, p_A.array[i].id, proc_waiting(t, p_A));
+        printf("%d, FINISHED, id=%d, proc-remaining=%d\n", global_t, p_A.array[i].id, proc_remaining(p_A)); //TODO will need to sort out proc waiting function
+        p_A.array[i].end_time = global_t;
     }
+
+    print_throughput(p_A);
+    print_turnaround_time(p_A);
+    print_timeoverhead(p_A);
+    printf("Makespan %d\n", global_t);
+
 
     return;
 }
@@ -89,6 +101,7 @@ void rr(Process_Array p_A, int quantum) {
                 p_A.array[i].remaining = 0;
                 p_A.array[i].has_run = 1;
                 printf("%d, FINISHED, id=%d, proc-remaining=%d\n", global_t, p_A.array[i].id, proc_remaining(p_A));
+                p_A.array[i].end_time = global_t;
                 //otherwise we need to keep the process waiting for the rr to come around again
             } else 
             {
@@ -115,3 +128,4 @@ void rr(Process_Array p_A, int quantum) {
 
     return;
 }
+
