@@ -18,6 +18,7 @@ Bitmap bitmap;
 int run(Args a) 
 {
     read(a.filename);
+    //if unlimited memory
     if (strcmp(a.memoryAllocation, "u") == 0) {
         if (strcmp(a.schedulingAlgorithm, "ff") == 0) {
         ff(p_A);
@@ -28,13 +29,17 @@ int run(Args a)
             //TODO my scheduling algorithm
             ;
         }
-    
+    //if page swapping
     } else if (strcmp(a.memoryAllocation, "p") == 0) {
         if ((strcmp(a.schedulingAlgorithm, "ff") == 0)) {
             ff_p(p_A, atoi(a.memorySize));
         } else if (strcmp(a.schedulingAlgorithm, "rr") == 0) {
             rr_p(p_A, atoi(a.memorySize), atoi(a.quantum));
         }
+    }
+    //if vm
+    else{
+        rr_vm(p_A, atoi(a.memorySize), atoi(a.quantum));
     }
 
     
@@ -154,6 +159,10 @@ void ff_p(Process_Array p_A, int memory) { //TODO handle the case when process i
     fprintf(stderr, "pages = %d\n", bitmap.num);
 
     for (int i=0; i<p_A.num; i++) {
+        //if proc not ready skip to that time
+        if (p_A.array[i].time_queued > global_t) {
+            global_t = p_A.array[i].time_queued;
+        }
         //TODO if there is spare memory then start running
         if (room_for_process(p_A.array[i])) {
             fprintf(stderr, "YES! THERE IS ROOM\n");
@@ -200,7 +209,7 @@ void rr_p(Process_Array p_A, int memory, int quantum) {
     int i = 0;
     while(proc_remaining(p_A)) {
         //need to make sure process is ready to run
-        if (p_A.array[i].t <= global_t) 
+        if (p_A.array[i].time_queued <= global_t) 
         {   
             //check if there's room in the bitmap
             if (room_for_process(p_A.array[i])) {
@@ -241,6 +250,83 @@ void rr_p(Process_Array p_A, int memory, int quantum) {
                 printf("%d, EVICTED", global_t);
                 print_mem_addresses(p_A.array[i]);
                 remove_process(p_A.array[i]);
+
+                //process queued back up
+                p_A.array[i].time_queued = global_t;
+
+                
+
+                
+            }
+        } else {
+            global_t = p_A.array[i].time_queued;
+        }
+        i = next_proc(p_A);
+    }
+
+    print_throughput(p_A);
+    print_turnaround_time(p_A);
+    print_timeoverhead(p_A);
+    printf("Makespan %d\n", global_t);
+
+    return;
+}
+
+void rr_vm(Process_Array p_A, int memory, int quantum) {
+    int t = global_t;
+    int pages = memory/4;
+    print_array(p_A);
+    bitmap.num = pages;
+    init_bitmap();
+    fprintf(stderr, "pages = %d\n", bitmap.num);
+    int i = 0;
+    while(proc_remaining(p_A)) {
+        //need to make sure process is ready to run
+        if (p_A.array[i].t <= global_t) 
+        {   
+            //check if there's room in the bitmap
+            if (room_for_vm(p_A.array[i])) {
+                fprintf(stderr, "YES! THERE IS ROOM\n");
+                print_bitmap();
+            } 
+            //print running stuff
+            print_running(p_A.array[i]);
+            print_mem_usage(p_A.array[i]);
+            print_mem_addresses(p_A.array[i]);    
+            //if we can finish the process before the quantum runs out        
+            if (p_A.array[i].remaining <= quantum) 
+            {
+                //quantum will be finished
+                t += p_A.array[i].remaining;
+                global_t += p_A.array[i].remaining;
+                p_A.array[i].remaining = 0;
+                p_A.array[i].has_run = 1;
+
+                //loading out of memory
+                global_t += p_A.array[i].load_time;
+                printf("%d, EVICTED", global_t);
+                print_mem_addresses(p_A.array[i]);
+                printf("%d, FINISHED, id=%d, proc-remaining=%d\n", global_t, p_A.array[i].id, proc_waiting(global_t, p_A));
+                remove_process_vm(p_A.array[i]);
+                p_A.array[i].end_time = global_t;
+                //otherwise we need to keep the process waiting for the rr to come around again
+            } else 
+            {
+                t += quantum;
+                global_t += quantum;
+                p_A.array[i].remaining -= quantum;
+                p_A.array[i].has_run = 1;
+                
+                //loading out of memory
+                global_t += p_A.array[i].load_time;
+
+                //don't evict if there's nothing else to swa
+                if (i != next_proc(p_A)) {
+                    printf("%d, EVICTED", global_t);
+                    print_mem_addresses(p_A.array[i]);
+                    remove_process_vm(p_A.array[i]);
+                }
+                
 
                 //process queued back up
                 p_A.array[i].time_queued = global_t;
