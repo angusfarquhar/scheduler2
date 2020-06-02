@@ -5,19 +5,28 @@
 extern int global_t;
 
 void print_throughput(Process_Array p_A) {
-    int stats[10] = {0};
+    int stats[10] = {-1};
+    int max_end = 0;
+    int amt_bins = global_t/60;
+    //find the last end 
+    for (int j=0; j<amt_bins; j++) 
+    {
+        stats[j] = 0;
+        fprintf(stderr, "stats[%d] = %d \n", j, stats[j]);
+    }
     int avg=0;
     int min=0;
     int max=0;
     for (int i=0; i<p_A.num; i++) 
     {
         int bin = (p_A.array[i].end_time-1)/60;
-        stats[bin] += 1; 
+        stats[bin] += 1;
+        fprintf(stderr, "bin = %d \n", bin); 
     }
     print_array(p_A);
-    avg = avg_throughput(stats, 10);
-    min = min_throughput(stats, 10);
-    max = max_throughput(stats, 10);
+    avg = avg_throughput(stats, amt_bins);
+    min = min_throughput(stats, amt_bins);
+    max = max_throughput(stats, amt_bins);
     printf("Throughput %d, %d, %d\n", avg, min, max);
 
     return;
@@ -36,10 +45,11 @@ int max_throughput(int *array, int num) {
 }
 
 int min_throughput(int *array, int num) {
-    int min = array[0];
+    int min = 1000;
     for (int i=0; i<num; i++) 
     {
-        if (array[i] < min && array[i] != 0) {
+        if (array[i] < min) {
+            fprintf(stderr, "min_array[%d] = %d\n", i, array[i]);
             min = array[i];
         }
     }
@@ -51,7 +61,7 @@ int avg_throughput(int *array, int num) {
     float count = 0;
     for (int i=0; i<num; i++) 
     {
-        if (array[i] != 0 || i == 0 || i == 1) { //TODO fix this hacky avg bullshit
+        if (array[i] != -1) { //TODO fix this hacky avg bullshit
             total += array[i];
             fprintf(stderr, "total : %f\n", total);
             count++;

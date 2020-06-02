@@ -15,8 +15,30 @@ int room_for_process(Process p)
 {
     int count = p.pages;
     fprintf(stderr, "room_bitmap[0] = %d\n", bitmap.array[0]);
-    fprintf(stderr, "count = %d\n", count);
+    // fprintf(stderr, "count = %d\n", count);
     fprintf(stderr, "p.pages = %d\n", p.pages);
+    for (int i=0; i<bitmap.num; i++) {  
+        if (count == 0) {
+            return 1;
+        }      
+        if (bitmap.array[i] == -1 || bitmap.array[i]  == p.id) {
+            count--;
+            //add process to bitmap
+            bitmap.array[i] = p.id;
+
+        }
+   }
+    fprintf(stderr, "countend = %d\n", count);
+    return 0;
+
+}
+
+int room_for_vm(Process p) 
+{
+    int count = p.pages;
+    // fprintf(stderr, "room_bitmap[0] = %d\n", bitmap.array[0]);
+    // fprintf(stderr, "count = %d\n", count);
+    // fprintf(stderr, "p.pages = %d\n", p.pages);
     for (int i=0; i<bitmap.num; i++) {  
         if (count == 0) {
             return 1;
@@ -28,6 +50,11 @@ int room_for_process(Process p)
 
         }
    }
+   //if it's been allocated more than 4 pages into memory it's fine!
+   if (p.pages-count >= 4) {
+       return 1;
+   }
+   
     fprintf(stderr, "countend = %d\n", count);
     return 0;
 
@@ -41,13 +68,25 @@ void remove_process(Process p) {
 
         }
    }
+   p.running = 0;
+   return;
+}
+
+void remove_process_vm(Process p) {
+    for (int i=0; i<4; i++) {       
+        if (bitmap.array[i] == p.id) {
+            bitmap.array[i] = -1;
+
+        }
+   }
+   p.running = 0;
    return;
 }
 
 void init_bitmap() {
     for (int i=0; i<bitmap.num; i++) {
         bitmap.array[i] = -1;
-        fprintf(stderr, "init_bitmap[%d] = %d\n",i, bitmap.array[i]);
+        //fprintf(stderr, "init_bitmap[%d] = %d\n",i, bitmap.array[i]);
 
     }
     return;
@@ -55,7 +94,7 @@ void init_bitmap() {
 
 void print_bitmap() {
     for (int i=0; i<bitmap.num; i++) {
-        fprintf(stderr, "print_bitmap[%d] = %d\n",i, bitmap.array[i]);
+        //fprintf(stderr, "print_bitmap[%d] = %d\n",i, bitmap.array[i]);
 
     }
     return;
@@ -72,19 +111,28 @@ void print_mem_usage(Process p) {
     }
 
    float percentage = (float)count / bitmap.num * 100.0;
-
-   printf(", mem-usage=%.0f%%", percentage);
+   percentage = percentage + 0.9; 
+   printf(", mem-usage=%d%%", (int)percentage);
 }
 
 void print_mem_addresses(Process p) {
     printf(", mem-addresses=[");
+    int count = 0;
     for (int i=0; i<bitmap.num; i++) {
+        
         if (p.id == bitmap.array[i]) {
+            count++;
+            if (count >1) {
+                printf(",%d", i);
+            }
+                
+        }
+        if (count == 1) {
             printf("%d", i);
         }
-        if (i != bitmap.num-1) {
-            printf(",");
-        }
+        // if (i != bitmap.num-1) {
+        //     printf(",");
+        // }
         
     }
     printf("]\n");

@@ -4,6 +4,8 @@
 #define TRUE 1
 #define FALSE 0
 
+extern int global_t;
+
 int proc_waiting(int t, Process_Array p_A) 
 {
     int count=0;
@@ -32,12 +34,14 @@ int proc_remaining(Process_Array p_A)
 
 //gives the next process in line that is waiting based on time queued and then lowest process id
 int next_proc(Process_Array p_A) {
-    //print_array(p_A);
+    print_array(p_A);
+    fprintf(stderr, "\nglobal_t = %d\n\n", global_t);
     if (proc_remaining(p_A) == 1) {
         for (int i=0; i<p_A.num; i++)
         {
             if (p_A.array[i].remaining > 0) 
             {
+                fprintf(stderr, "proc remaining = 1\n");
                 return i;
             }
         }
@@ -46,12 +50,15 @@ int next_proc(Process_Array p_A) {
     int i = 0;
     while (i<p_A.num)
     {
+        fprintf(stderr, "\nmin_i start of loop = %d\n", min_i);
         if (p_A.array[i].remaining == 0) 
         {
+            fprintf(stderr, "\np_A.array[%d] = %d\n\n", i, p_A.array[i].remaining);
             i++;
         }
         if (p_A.array[min_i].remaining == 0) 
         {
+            fprintf(stderr, "\nmini p_A.array[%d] = %d\n\n", min_i, p_A.array[min_i].id);
             min_i++;
         }
         else
@@ -87,7 +94,7 @@ int next_proc(Process_Array p_A) {
                  
         } 
         i++;
-        //printf("\ni : %d\n", i);
+        fprintf(stderr, "\ni : %d\n", i);
         
     }
     fprintf(stderr, "\nmin_i : %d\n", min_i);

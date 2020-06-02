@@ -15,6 +15,7 @@ typedef struct Process {
     float turnaround;
     float time_overhead;
     int pages;
+    int running;
 } Process;
 
 #endif

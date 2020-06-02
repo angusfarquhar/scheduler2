@@ -14,5 +14,6 @@ void remove_process(Process p);
 void print_mem_usage(Process p);
 void print_mem_addresses(Process p);
 int room_for_vm(Process p);
+void remove_process_vm(Process p);
 
 #endif
