@@ -288,7 +288,7 @@ void rr_p(Process_Array p_A, int memory, int quantum) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void rr_vm(Process_Array p_A, int memory, int quantum) {
-    int t = global_t;
+    int t=0;
     int pages = memory/4;
     //print_array(p_A);
     bitmap.num = pages;
@@ -303,9 +303,10 @@ void rr_vm(Process_Array p_A, int memory, int quantum) {
             if (room_for_vm(p_A.array[i])) {
                 //fprintf(stderr, "YES! THERE IS ROOM\n");
                 //print_bitmap();
+                ;
             } 
             //print running stuff
-            print_running(p_A.array[i]);
+            // print_running(p_A.array[i]);
             print_mem_usage(p_A.array[i]);
             print_mem_addresses(p_A.array[i]);    
             //if we can finish the process before the quantum runs out        
@@ -332,15 +333,16 @@ void rr_vm(Process_Array p_A, int memory, int quantum) {
                 p_A.array[i].remaining -= quantum;
                 p_A.array[i].has_run = 1;
                 
-                //loading out of memory
-                global_t += p_A.array[i].load_time;
+                // //loading out of memory
+                // global_t += p_A.array[i].load_time;
 
-                //don't evict if there's nothing else to swa
-                if (i != next_proc(p_A)) {
-                    printf("%d, EVICTED", global_t);
-                    print_mem_addresses(p_A.array[i]);
-                    remove_process_vm(p_A.array[i]);
-                }
+                //don't evict if there's nothing else to swap
+
+                
+                
+                remove_process_vm(p_A.array[i]);
+                //print_mem_addresses(p_A.array[i]);
+
                 
 
                 //process queued back up
