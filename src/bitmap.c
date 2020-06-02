@@ -35,28 +35,48 @@ int room_for_process(Process p)
 
 int room_for_vm(Process p) 
 {
+    int is_room = 0;
+    
     int count = p.pages;
+    int single_load = p.load_time / p.pages;
+    int load_count = 0; 
+    int min_to_run = count - 4;
+
+    //check if process already in there
+    for (int i=0; i<bitmap.num; i++) {
+        if (p.id == bitmap.array[i]) {
+            count--;
+        }
+    }
     // fprintf(stderr, "room_bitmap[0] = %d\n", bitmap.array[0]);
     // fprintf(stderr, "count = %d\n", count);
     // fprintf(stderr, "p.pages = %d\n", p.pages);
     for (int i=0; i<bitmap.num; i++) {  
         if (count == 0) {
-            return 1;
+            is_room =1;
         }      
         if (bitmap.array[i] == -1) {
             count--;
             //add process to bitmap
             bitmap.array[i] = p.id;
+            load_count += single_load;
 
         }
    }
-   //if it's been allocated more than 4 pages into memory it's fine!
-   if (p.pages-count >= 4) {
-       return 1;
-   }
    
-    fprintf(stderr, "countend = %d\n", count);
-    return 0;
+    //fprintf(stderr, "countend = %d\n", count);
+    if (count <= min_to_run) {
+        
+        is_room = 1;
+        //adding the penalty
+        p.remaining += count;
+    }
+
+    printf("%d, RUNNING, id=%d, remaining-time=%d", global_t, p.id, p.remaining);
+    printf(", load-time=%d", load_count);
+    p.mem_start = global_t;
+    global_t += load_count;
+    return is_room;
 
 }
 
@@ -73,47 +93,32 @@ void remove_process(Process p) {
 }
 
 void remove_process_vm(Process p) {
+    printf("%d, EVICTED", global_t);
+    printf(", mem-addresses=[");
+    int count = 0;
+    int single_load = p.load_time / p.pages;
     for (int i=0; i<4; i++) {       
         if (bitmap.array[i] == p.id) {
             bitmap.array[i] = -1;
+            //time moves forward by the load time per page
+            //global_t += single_load;
 
+            count++;
+            if (count >1) {
+                printf(",%d", i);
+            }
+
+        }
+        if (count == 1) {
+            printf("%d", i);
         }
    }
    p.running = 0;
+   printf("]\n");
    return;
 }
 
-void init_bitmap() {
-    for (int i=0; i<bitmap.num; i++) {
-        bitmap.array[i] = -1;
-        //fprintf(stderr, "init_bitmap[%d] = %d\n",i, bitmap.array[i]);
 
-    }
-    return;
-}
-
-void print_bitmap() {
-    for (int i=0; i<bitmap.num; i++) {
-        //fprintf(stderr, "print_bitmap[%d] = %d\n",i, bitmap.array[i]);
-
-    }
-    return;
-}
-
-//adapted from https://www.tutorialspoint.com/learn_c_by_examples/program_to_calculate_percentage_in_c.htm
-void print_mem_usage(Process p) {
-
-    int count = 0;
-    for (int i=0; i<bitmap.num; i++) {
-        if (p.id == bitmap.array[i]) {
-            count++;
-        }
-    }
-
-   float percentage = (float)count / bitmap.num * 100.0;
-   percentage = percentage + 0.9; 
-   printf(", mem-usage=%d%%", (int)percentage);
-}
 
 void print_mem_addresses(Process p) {
     printf(", mem-addresses=[");
@@ -138,3 +143,36 @@ void print_mem_addresses(Process p) {
     printf("]\n");
 
 }
+
+void init_bitmap() {
+    for (int i=0; i<bitmap.num; i++) {
+        bitmap.array[i] = -1;
+        //fprintf(stderr, "init_bitmap[%d] = %d\n",i, bitmap.array[i]);
+
+    }
+    return;
+}
+
+void print_bitmap() {
+    for (int i=0; i<bitmap.num; i++) {
+        //fprintf(stderr, "print_bitmap[%d] = %d\n",i, bitmap.array[i]);
+
+    }
+    return;
+}
+
+//adapted from https://www.tutorialspoint.com/learn_c_by_examples/program_to_calculate_percentage_in_c.htm
+void print_mem_usage(Process p) {
+
+    int count = 0;
+    for (int i=0; i<bitmap.num; i++) {
+        if (bitmap.array[i] > 0) {
+            count++;
+        }
+    }
+
+   float percentage = (float)count / bitmap.num * 100.0;
+   percentage = percentage + 0.9; 
+   printf(", mem-usage=%d%%", (int)percentage);
+}
+
