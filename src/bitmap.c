@@ -14,9 +14,9 @@ extern int global_t;
 int room_for_process(Process p) 
 {
     int count = p.pages;
-    fprintf(stderr, "room_bitmap[0] = %d\n", bitmap.array[0]);
+    //fprintf(stderr, "room_bitmap[0] = %d\n", bitmap.array[0]);
     // fprintf(stderr, "count = %d\n", count);
-    fprintf(stderr, "p.pages = %d\n", p.pages);
+    //fprintf(stderr, "p.pages = %d\n", p.pages);
     for (int i=0; i<bitmap.num; i++) {  
         if (count == 0) {
             return 1;
@@ -28,7 +28,7 @@ int room_for_process(Process p)
 
         }
    }
-    fprintf(stderr, "countend = %d\n", count);
+    //fprintf(stderr, "countend = %d\n", count);
     return 0;
 
 }

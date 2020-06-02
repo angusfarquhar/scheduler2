@@ -34,8 +34,9 @@ int proc_remaining(Process_Array p_A)
 
 //gives the next process in line that is waiting based on time queued and then lowest process id
 int next_proc(Process_Array p_A) {
-    print_array(p_A);
+    //print_array(p_A);
     fprintf(stderr, "\nglobal_t = %d\n\n", global_t);
+    //if there's only one remaining pick that
     if (proc_remaining(p_A) == 1) {
         for (int i=0; i<p_A.num; i++)
         {
@@ -47,22 +48,30 @@ int next_proc(Process_Array p_A) {
         }
     }
     int min_i = 0;
-    int i = 0;
+    int i = 1;
     while (i<p_A.num)
     {
-        fprintf(stderr, "\nmin_i start of loop = %d\n", min_i);
+        if (i == min_i) {
+            i++;
+        }
+        //fprintf(stderr, "\nmin_i start of loop = %d\n", min_i);
         if (p_A.array[i].remaining == 0) 
         {
-            fprintf(stderr, "\np_A.array[%d] = %d\n\n", i, p_A.array[i].remaining);
+            //fprintf(stderr, "\np_A.array[%d] = %d\n\n", i, p_A.array[i].remaining);
             i++;
         }
         if (p_A.array[min_i].remaining == 0) 
         {
-            fprintf(stderr, "\nmini p_A.array[%d] = %d\n\n", min_i, p_A.array[min_i].id);
-            min_i++;
+            //fprintf(stderr, "\nmini p_A.array[%d] = %d\n\n", min_i, p_A.array[min_i].id);
+            if (p_A.array[i].remaining > 0) {
+                min_i = i;
+                i++;
+            }
+            
         }
         else
         {
+            //fprintf(stderr, "hit this else statment\n");
             if (p_A.array[i].time_queued < p_A.array[min_i].time_queued) 
             {
                 min_i = i;
@@ -74,7 +83,7 @@ int next_proc(Process_Array p_A) {
                 //check if there is a process waiting that hasn't run
                 if (p_A.array[i].has_run < p_A.array[min_i].has_run) 
                 {
-                    fprintf(stderr, "%d less than %d\n", i, min_i);
+                    //fprintf(stderr, "%d less than %d\n", i, min_i);
                     min_i = i;
                 }
                 if (p_A.array[i].id > p_A.array[min_i].id) 
@@ -92,12 +101,84 @@ int next_proc(Process_Array p_A) {
             
             
                  
-        } 
+        }
         i++;
-        fprintf(stderr, "\ni : %d\n", i);
+        
+        
+        //fprintf(stderr, "\ni : %d\n", i);
         
     }
-    fprintf(stderr, "\nmin_i : %d\n", min_i);
+    //fprintf(stderr, "\nmin_i : %d\n", min_i);
+
+    return min_i;
+}
+
+int next_proc_shortest(Process_Array p_A) {
+    //print_array(p_A);
+    fprintf(stderr, "\nglobal_t = %d\n\n", global_t);
+    if (proc_remaining(p_A) == 1) {
+        for (int i=0; i<p_A.num; i++)
+        {
+            if (p_A.array[i].remaining > 0) 
+            {
+                fprintf(stderr, "proc remaining = 1\n");
+                return i;
+            }
+        }
+    }
+    int min_i = 0;
+    int i = 0;
+    while (i<p_A.num)
+    {
+        //fprintf(stderr, "\nmin_i start of loop = %d\n", min_i);
+        if (p_A.array[i].remaining == 0) 
+        {
+            //fprintf(stderr, "\np_A.array[%d] = %d\n\n", i, p_A.array[i].remaining);
+            i++;
+        }
+        if (p_A.array[min_i].remaining == 0) 
+        {
+            //fprintf(stderr, "\nmini p_A.array[%d] = %d\n\n", min_i, p_A.array[min_i].id);
+            min_i++;
+        }
+        else
+        {
+            if (p_A.array[i].time_queued < p_A.array[min_i].time_queued) 
+            {
+                min_i = i;
+            } else if (p_A.array[i].time_queued > p_A.array[min_i].time_queued)
+            {
+                ;
+            } else
+            {   
+                //check if there is a process waiting that hasn't run
+                if (p_A.array[i].has_run < p_A.array[min_i].has_run) 
+                {
+                    //fprintf(stderr, "%d less than %d\n", i, min_i);
+                    min_i = i;
+                }
+                //take the one with the shortest job
+                if (p_A.array[i].runtime > p_A.array[min_i].runtime) 
+                {
+                    ;
+                } else
+                {
+                    min_i = i;
+                }
+                
+                
+                
+                
+            }
+            
+            
+                 
+        } 
+        i++;
+        //fprintf(stderr, "\ni : %d\n", i);
+        
+    }
+    //fprintf(stderr, "\nmin_i : %d\n", min_i);
 
     return min_i;
 }
