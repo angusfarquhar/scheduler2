@@ -11,5 +11,6 @@ int proc_waiting(int t, Process_Array p_A);
 int proc_remaining(Process_Array p_A);
 int next_proc(Process_Array p_A);
 void print_array(Process_Array p_A);
+int next_proc_shortest(Process_Array p_A);
 
 #endif

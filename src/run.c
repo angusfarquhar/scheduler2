@@ -50,6 +50,8 @@ int run(Args a)
     return 0;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 //read a file from input and create the process data structure
 void read(char *filename)
 {
@@ -86,6 +88,8 @@ void read(char *filename)
     return;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 //current_time, RUNNING, id=<process-id>, remaining-time=<T_rem>, load-time=<T_load>, mem-usage=<mem_usage>%, mem-addresses=[<set_of_pages>]\n
 void ff(Process_Array p_A) { //TODO handle the case when process isn't ready in time.
@@ -110,6 +114,8 @@ void ff(Process_Array p_A) { //TODO handle the case when process isn't ready in 
 
     return;
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //current_time, FINISHED, id=<process-id>, proc-remaining=<num_proc_left>\n
 
@@ -153,6 +159,8 @@ void rr(Process_Array p_A, int quantum) {
     return;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void ff_p(Process_Array p_A, int memory) { //TODO handle the case when process isn't ready in time.
     int t = global_t;
     int pages = memory/4;
@@ -168,8 +176,8 @@ void ff_p(Process_Array p_A, int memory) { //TODO handle the case when process i
         }
         //TODO if there is spare memory then start running
         if (room_for_process(p_A.array[i])) {
-            fprintf(stderr, "YES! THERE IS ROOM\n");
-            print_bitmap();
+            //fprintf(stderr, "YES! THERE IS ROOM\n");
+            //print_bitmap();
         } 
         //now process is running! print running stuff
         print_running(p_A.array[i]);
@@ -202,6 +210,8 @@ void ff_p(Process_Array p_A, int memory) { //TODO handle the case when process i
     return;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void rr_p(Process_Array p_A, int memory, int quantum) {
     int t = global_t;
     int pages = memory/4;
@@ -216,8 +226,8 @@ void rr_p(Process_Array p_A, int memory, int quantum) {
         {   
             //check if there's room in the bitmap
             if (room_for_process(p_A.array[i])) {
-                fprintf(stderr, "YES! THERE IS ROOM\n");
-                print_bitmap();
+                //fprintf(stderr, "YES! THERE IS ROOM\n");
+                //print_bitmap();
             } 
             //print running stuff
             print_running(p_A.array[i]);
@@ -275,6 +285,8 @@ void rr_p(Process_Array p_A, int memory, int quantum) {
     return;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void rr_vm(Process_Array p_A, int memory, int quantum) {
     int t = global_t;
     int pages = memory/4;
@@ -289,8 +301,8 @@ void rr_vm(Process_Array p_A, int memory, int quantum) {
         {   
             //check if there's room in the bitmap
             if (room_for_vm(p_A.array[i])) {
-                fprintf(stderr, "YES! THERE IS ROOM\n");
-                print_bitmap();
+                //fprintf(stderr, "YES! THERE IS ROOM\n");
+                //print_bitmap();
             } 
             //print running stuff
             print_running(p_A.array[i]);
@@ -349,6 +361,8 @@ void rr_vm(Process_Array p_A, int memory, int quantum) {
 
     return;
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void sjf_p(Process_Array p_A, int memory, int quantum) {
     int t = global_t;
@@ -412,7 +426,7 @@ void sjf_p(Process_Array p_A, int memory, int quantum) {
         } else {
             global_t = p_A.array[i].time_queued;
         }
-        i = next_proc(p_A);
+        i = next_proc_shortest(p_A);
     }
 
     print_throughput(p_A);
