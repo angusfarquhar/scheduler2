@@ -296,19 +296,25 @@ void rr_vm(Process_Array p_A, int memory, int quantum) {
     fprintf(stderr, "pages = %d\n", bitmap.num);
     int i = 0;
     while(proc_remaining(p_A)) {
+        fprintf(stderr, "------------------------------------------------ global_t = %d ------------------------------------------------\n", global_t);
+        print_array(p_A);
         //need to make sure process is ready to run
         if (p_A.array[i].t <= global_t) 
         {   
             //check if there's room in the bitmap
-            if (room_for_vm(p_A.array[i])) {
-                //fprintf(stderr, "YES! THERE IS ROOM\n");
+            int room = room_for_vm(p_A.array[i]);
+            if (room > -1) {
+                fprintf(stderr, "YES! THERE IS ROOM\n");
+                p_A.array[i].remaining += room;
                 //print_bitmap();
                 ;
-            } 
+            }
+            // } else {
+            //     remove_oldest_pages();
+            // }
             //print running stuff
             // print_running(p_A.array[i]);
-            print_mem_usage(p_A.array[i]);
-            print_mem_addresses(p_A.array[i]);    
+                
             //if we can finish the process before the quantum runs out        
             if (p_A.array[i].remaining <= quantum) 
             {
@@ -319,11 +325,11 @@ void rr_vm(Process_Array p_A, int memory, int quantum) {
                 p_A.array[i].has_run = 1;
 
                 //loading out of memory
-                global_t += p_A.array[i].load_time;
+                //global_t += p_A.array[i].load_time;
                 printf("%d, EVICTED", global_t);
                 print_mem_addresses(p_A.array[i]);
                 printf("%d, FINISHED, id=%d, proc-remaining=%d\n", global_t, p_A.array[i].id, proc_waiting(global_t, p_A));
-                remove_process_vm(p_A.array[i]);
+                remove_process(p_A.array[i]);
                 p_A.array[i].end_time = global_t;
                 //otherwise we need to keep the process waiting for the rr to come around again
             } else 
@@ -337,10 +343,13 @@ void rr_vm(Process_Array p_A, int memory, int quantum) {
                 // global_t += p_A.array[i].load_time;
 
                 //don't evict if there's nothing else to swap
-
-                
-                
-                remove_process_vm(p_A.array[i]);
+                int old_time = p_A.array[i].time_queued;
+                p_A.array[i].time_queued = global_t;
+                int next = next_proc(p_A);
+                p_A.array[i].time_queued = old_time;
+                fprintf(stderr, "current %d \tnext proc id = %d\n", p_A.array[i].id,p_A.array[next].id);
+                fprintf(stderr, "removing oldest pages\n");
+                remove_oldest_pages(4, p_A.array[next].id);
                 //print_mem_addresses(p_A.array[i]);
 
                 

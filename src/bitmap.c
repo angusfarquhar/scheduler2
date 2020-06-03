@@ -25,6 +25,7 @@ int room_for_process(Process p)
             count--;
             //add process to bitmap
             bitmap.array[i] = p.id;
+            bitmap.start_time[i] = global_t;
 
         }
    }
@@ -33,6 +34,7 @@ int room_for_process(Process p)
 
 }
 
+//returns -1 if process can't run 0 if it fits or positive int for the amount of pages missing
 int room_for_vm(Process p) 
 {
     int is_room = 0;
@@ -41,7 +43,7 @@ int room_for_vm(Process p)
     int single_load = p.load_time / p.pages;
     int load_count = 0; 
     int min_to_run = count - 4;
-
+    fprintf(stderr, "p.pages = %d\n", p.pages);
     //check if process already in there
     for (int i=0; i<bitmap.num; i++) {
         if (p.id == bitmap.array[i]) {
@@ -59,24 +61,35 @@ int room_for_vm(Process p)
             count--;
             //add process to bitmap
             bitmap.array[i] = p.id;
+            bitmap.start_time[i] = global_t;
+            bitmap.load_time[i] = p.load_time / p.pages;
             load_count += single_load;
 
         }
    }
    
-    //fprintf(stderr, "countend = %d\n", count);
+    fprintf(stderr, "countend = %d\n", count);
+    fprintf(stderr, "remaining before count = %d\n", p.remaining);
     if (count <= min_to_run) {
         
         is_room = 1;
         //adding the penalty
-        p.remaining += count;
+        
     }
-
+    p.remaining += count;
     printf("%d, RUNNING, id=%d, remaining-time=%d", global_t, p.id, p.remaining);
     printf(", load-time=%d", load_count);
+    print_mem_usage(p);
+    print_mem_addresses(p);
     p.mem_start = global_t;
     global_t += load_count;
-    return is_room;
+
+    if (is_room) {
+        return count;
+    } else {
+        return -1;
+    }
+    
 
 }
 
@@ -88,34 +101,56 @@ void remove_process(Process p) {
 
         }
    }
-   p.running = 0;
    return;
 }
 
-void remove_process_vm(Process p) {
+//removes the oldest processes in the bitmap
+void remove_oldest_pages(int num, int next) {
+    //print_bitmap();
+    int removed[100] = {-1};
     printf("%d, EVICTED", global_t);
-    printf(", mem-addresses=[");
+    printf(", mem-addresses=["); //TODO change back to printf
     int count = 0;
-    int single_load = p.load_time / p.pages;
-    for (int i=0; i<4; i++) {       
-        if (bitmap.array[i] == p.id) {
-            bitmap.array[i] = -1;
-            //time moves forward by the load time per page
-            //global_t += single_load;
+    for (int i=0; i<num; i++) {
+        int remove = oldest_page(next); 
+        fprintf(stderr, "oldest page %d\n", remove);    
+        bitmap.array[remove] = -1;
+        bitmap.start_time[remove] = -1;
+        removed[i] = remove;
+        //time moves forward by the load time per page
+        //global_t += single_load;
 
-            count++;
-            if (count >1) {
-                printf(",%d", i);
-            }
-
+        
+   }
+   qsort(removed, num, sizeof(int), cmpfunc);
+   for (int i = 0; i<num; i++) {
+       if (i >0) {
+            printf(",%d", removed[i]);
         }
-        if (count == 1) {
-            printf("%d", i);
+
+        
+        if (i == 0) {
+            printf("%d", removed[i]);
         }
    }
-   p.running = 0;
+        
    printf("]\n");
    return;
+}
+
+//returns index in bitmap of oldest page so we can remove it first
+int oldest_page(int next) {
+    int min = 1000000;
+    fprintf(stderr, "min at start= %d", min);
+    int index = 0;
+    for (int i=0; i<bitmap.num; i++) {
+        if (bitmap.start_time[i] < min && bitmap.start_time[i] != -1 && bitmap.array[i] != next) {
+            fprintf(stderr, "start_time[%d] %d\n", i, bitmap.start_time[i]);
+            min = bitmap.start_time[i];
+            index = i;
+        }
+    }
+    return index;
 }
 
 
@@ -147,6 +182,8 @@ void print_mem_addresses(Process p) {
 void init_bitmap() {
     for (int i=0; i<bitmap.num; i++) {
         bitmap.array[i] = -1;
+        bitmap.start_time[i] = -1;
+        bitmap.load_time[i] = -1;
         //fprintf(stderr, "init_bitmap[%d] = %d\n",i, bitmap.array[i]);
 
     }
@@ -176,3 +213,7 @@ void print_mem_usage(Process p) {
    printf(", mem-usage=%d%%", (int)percentage);
 }
 
+//taken from https://www.tutorialspoint.com/c_standard_library/c_function_qsort.htm
+int cmpfunc (const void * a, const void * b) {
+   return ( *(int*)a - *(int*)b );
+}
