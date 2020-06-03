@@ -113,16 +113,20 @@ void remove_oldest_pages(int num, int next) {
     int count = 0;
     for (int i=0; i<num; i++) {
         int remove = oldest_page(next); 
-        fprintf(stderr, "oldest page %d\n", remove);    
+        fprintf(stderr, "oldest page %d\n", remove); 
+        
         bitmap.array[remove] = -1;
         bitmap.start_time[remove] = -1;
         removed[i] = remove;
+        
+          
+        
         //time moves forward by the load time per page
         //global_t += single_load;
 
         
    }
-   qsort(removed, num, sizeof(int), cmpfunc);
+   qsort(removed, num-count, sizeof(int), cmpfunc);
    for (int i = 0; i<num; i++) {
        if (i >0) {
             printf(",%d", removed[i]);
@@ -142,8 +146,10 @@ void remove_oldest_pages(int num, int next) {
 int oldest_page(int next) {
     int min = 1000000;
     fprintf(stderr, "min at start= %d", min);
+    fprintf(stderr, "next at start= %d", next);
     int index = 0;
-    for (int i=0; i<bitmap.num; i++) {
+    print_bitmap();
+    for (int i=0; i<bitmap.num; i++) {                                      //don't want to remove a page if it is proc up next 
         if (bitmap.start_time[i] < min && bitmap.start_time[i] != -1 && bitmap.array[i] != next) {
             fprintf(stderr, "start_time[%d] %d\n", i, bitmap.start_time[i]);
             min = bitmap.start_time[i];
@@ -191,10 +197,12 @@ void init_bitmap() {
 }
 
 void print_bitmap() {
+    fprintf(stderr, "\n");
     for (int i=0; i<bitmap.num; i++) {
-        //fprintf(stderr, "print_bitmap[%d] = %d\n",i, bitmap.array[i]);
+        fprintf(stderr, "print_bitmap[%d] = [%d],[%d]\n",i, bitmap.array[i], bitmap.start_time[i]);
 
     }
+    fprintf(stderr, "\n");
     return;
 }
 
