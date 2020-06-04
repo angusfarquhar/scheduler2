@@ -259,10 +259,23 @@ void rr_p(Process_Array p_A, int memory, int quantum) {
                 
                 //loading out of memory
                 global_t += p_A.array[i].load_time;
+
+                //don't evict if there's nothing else to swap
+                int old_time = p_A.array[i].time_queued;
+                p_A.array[i].time_queued = global_t;
+                int next = next_proc(p_A);
+                p_A.array[i].time_queued = old_time;
+                //process queued back up but no evicted from memory if it's next
+                if (i == next) {
+                    
+                    p_A.array[i].time_queued = global_t;
+                } else {
+                    printf("%d, EVICTED", global_t);
+                    print_mem_addresses(p_A.array[i]);
+                    remove_process(p_A.array[i]);
+                }
                 
-                printf("%d, EVICTED", global_t);
-                print_mem_addresses(p_A.array[i]);
-                remove_process(p_A.array[i]);
+                
 
                 //process queued back up
                 p_A.array[i].time_queued = global_t;
