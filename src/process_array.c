@@ -111,15 +111,12 @@ int next_proc_shortest(Process_Array p_A) {
             //if time queued equal check if one has run before
         } else if (p_A.array[i].remaining > 0 && p_A.array[i].time_queued == p_A.array[min].time_queued)
         {
-            if (p_A.array[i].has_run < p_A.array[min].has_run) {
+            if (p_A.array[i].runtime < p_A.array[min].runtime) {
                 min = i;
-            } else if (p_A.array[i].has_run == p_A.array[min].has_run) {
-                if (p_A.array[i].runtime < p_A.array[min].runtime) {
-                    min = i;
-                }
-            }
-            
+            } 
         }
+            
+    
     }
 
     return min;
