@@ -111,13 +111,22 @@ void remove_oldest_pages(int num, int next) {
     printf("%d, EVICTED", global_t);
     printf(", mem-addresses=["); //TODO change back to printf
     int count = 0;
+
+    for (int i=0; i<bitmap.num; i++) {
+        if (bitmap.array[i] == next) {
+            num--; 
+        }
+    }
+
     for (int i=0; i<num; i++) {
         int remove = oldest_page(next); 
         fprintf(stderr, "oldest page %d\n", remove); 
+        if (remove != -1) {
+            bitmap.array[remove] = -1;
+            bitmap.start_time[remove] = -1;
+            removed[i] = remove;
+        }
         
-        bitmap.array[remove] = -1;
-        bitmap.start_time[remove] = -1;
-        removed[i] = remove;
         
           
         
