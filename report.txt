@@ -1,0 +1,38 @@
+For my scheduling algorithm I implemented a "shortest job first" (SJF) approach. The algorithm works
+by preferencing the process with the shortest runtime in the queue. This allows an improvement
+in turnaround time and time overhead as the average time processes spend waiting to be run is
+reduced. Comparing it to the baselines,  One issue that could occur with SJF is having a process 
+with a long run-time having to wait if shorter processes are continually added.
+
+
+
+
+
+
+
+(1) its short description; 
+(2) scenarios where it performs better than the baselines and why; 
+(3) scenarios where it does not perform well and why (if applicable).
+
+
+
+
+
+
+--------cs---------
+Throughput 3, 1, 3
+Turnaround time 150
+Time overhead 14.00 8.28
+Makespan 360
+
+--------ff---------
+Throughput 3, 1, 3
+Turnaround time 173
+Time overhead 56.00 14.63
+Makespan 360
+
+--------rr---------
+Throughput 2, 0, 3
+Turnaround time 272
+Time overhead 34.00 16.82
+Makespan 480
