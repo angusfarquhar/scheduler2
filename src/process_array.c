@@ -126,10 +126,10 @@ int next_proc_shortest(Process_Array p_A) {
 }
 
 void print_array(Process_Array p_A) {
-    fprintf(stderr, "\n[i]\tt\tid\tkb\truntime\trem\tt_q\thas_run\tend\tpages\n");
+    fprintf(stderr, "\n[i]\tt\tid\tkb\truntime\trem\tt_q\thas_run\tend\tpages\tmemstart\n");
     for (int i=0; i<p_A.num; i++)
     {
-        fprintf(stderr, "[%d]\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", i, p_A.array[i].t, p_A.array[i].id, p_A.array[i].kb, p_A.array[i].runtime, p_A.array[i].remaining, p_A.array[i].time_queued, p_A.array[i].has_run, p_A.array[i].end_time, p_A.array[i].pages);
+        fprintf(stderr, "[%d]\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", i, p_A.array[i].t, p_A.array[i].id, p_A.array[i].kb, p_A.array[i].runtime, p_A.array[i].remaining, p_A.array[i].time_queued, p_A.array[i].has_run, p_A.array[i].end_time, p_A.array[i].pages, p_A.array[i].mem_start);
     }
     fprintf(stderr, "\n");
 }
