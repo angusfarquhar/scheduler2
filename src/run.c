@@ -22,10 +22,9 @@ int run(Args a)
     if (strcmp(a.memoryAllocation, "u") == 0) {
         if (strcmp(a.schedulingAlgorithm, "ff") == 0) {
         ff(p_A);
-        } else if (strcmp(a.schedulingAlgorithm, "rr") == 0)
-        {
+        }else if (strcmp(a.schedulingAlgorithm, "rr") == 0){
             rr(p_A, atoi(a.quantum));
-        } else if (strcmp(a.schedulingAlgorithm, "cs") == 0) {
+        }else if (strcmp(a.schedulingAlgorithm, "cs") == 0) {
             //TODO my scheduling algorithm
             sjf_p(p_A, atoi(a.memorySize), 1000);
         }
@@ -33,7 +32,7 @@ int run(Args a)
     } else if (strcmp(a.memoryAllocation, "p") == 0) {
         if ((strcmp(a.schedulingAlgorithm, "ff") == 0)) {
             ff_p(p_A, atoi(a.memorySize));
-        } else if (strcmp(a.schedulingAlgorithm, "rr") == 0) {
+        }else if (strcmp(a.schedulingAlgorithm, "rr") == 0) {
             rr_p(p_A, atoi(a.memorySize), atoi(a.quantum));
         }else if (strcmp(a.schedulingAlgorithm, "cs") == 0) {
             //TODO my scheduling algorithm
@@ -41,8 +40,15 @@ int run(Args a)
         }
     }
     //if vm
-    else{
-        rr_vm(p_A, atoi(a.memorySize), atoi(a.quantum));
+    else if (strcmp(a.memoryAllocation, "v") == 0){
+        if ((strcmp(a.schedulingAlgorithm, "ff") == 0)) {
+            ff_p(p_A, atoi(a.memorySize));
+        }else if (strcmp(a.schedulingAlgorithm, "rr") == 0) {
+            rr_vm(p_A, atoi(a.memorySize), atoi(a.quantum));
+        }else if (strcmp(a.schedulingAlgorithm, "cs") == 0) {
+            //TODO my scheduling algorithm
+            sjf_p(p_A, atoi(a.memorySize), 1000);
+        }
     }
 
     
