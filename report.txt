@@ -4,7 +4,7 @@ in turnaround time and time overhead as the average time processes spend waiting
 reduced. Comparing it to the baselines,  One issue that could occur with SJF is having a process 
 with a long run-time having to wait if shorter processes are continually added.
 
-
+For my memory management algorithm my approach evicts the process in memory with the largest size.
 
 
 
