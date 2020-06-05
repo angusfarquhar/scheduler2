@@ -4,35 +4,7 @@ in turnaround time and time overhead as the average time processes spend waiting
 reduced. Comparing it to the baselines,  One issue that could occur with SJF is having a process 
 with a long run-time having to wait if shorter processes are continually added.
 
-For my memory management algorithm my approach evicts the process in memory with the largest size.
-
-
-
-
-
-(1) its short description; 
-(2) scenarios where it performs better than the baselines and why; 
-(3) scenarios where it does not perform well and why (if applicable).
-
-
-
-
-
-
---------cs---------
-Throughput 3, 1, 3
-Turnaround time 150
-Time overhead 14.00 8.28
-Makespan 360
-
---------ff---------
-Throughput 3, 1, 3
-Turnaround time 173
-Time overhead 56.00 14.63
-Makespan 360
-
---------rr---------
-Throughput 2, 0, 3
-Turnaround time 272
-Time overhead 34.00 16.82
-Makespan 480
+For my memory management algorithm my approach evicts the process in memory with the largest size. 
+This minimises the turnaround time for processes in the queue as it allows for more processes to be run after an eviction.
+A situation in which this would not work though is when you had a lot of smaller sized processes and one large process. The 
+large process would continually be evicted and as such its turnaround time would be large.
